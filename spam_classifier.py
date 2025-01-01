@@ -1,12 +1,12 @@
-import re  # For regular expressions to process text
+import re  # Import regular expressions for text processing
 import string  # To handle punctuation removal
 from sklearn.model_selection import train_test_split, GridSearchCV  # For splitting data and hyperparameter tuning
-from sklearn.feature_extraction.text import TfidfVectorizer  # To convert text to numeric features
+from sklearn.feature_extraction.text import TfidfVectorizer  # To convert text into numerical features
 from sklearn.linear_model import LogisticRegression  # Logistic Regression model
 from sklearn.ensemble import RandomForestClassifier  # Random Forest classifier
 from sklearn.svm import SVC  # Support Vector Classifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix, roc_curve, auc  # For model evaluation
-from imblearn.over_sampling import RandomOverSampler  # For handling class imbalance by oversampling the minority class
+from imblearn.over_sampling import RandomOverSampler  # To handle class imbalance by oversampling the minority class
 from imblearn.pipeline import Pipeline  # To create a pipeline of transformations and models
 import seaborn as sns  # For visualization, especially confusion matrix heatmaps
 import matplotlib.pyplot as plt  # For plotting visualizations
@@ -35,27 +35,37 @@ stop_words = set(stopwords.words('english'))  # A set of common words to remove 
 
 # Define a preprocessing function for email text
 def preprocess_email(text, remove_punctuation=True, lowercase=True, remove_urls=True, remove_numbers=True, remove_headers=True):
-    # Optional: Remove email headers such as From, To, Subject, Date
+    """
+    Preprocess the email text by performing the following operations:
+    1. Removing email headers (From, To, Subject, Date).
+    2. Removing numbers, replacing them with 'NUMBER'.
+    3. Removing URLs (links).
+    4. Converting the text to lowercase.
+    5. Removing punctuation.
+    6. Lemmatizing the words (reducing to their base form).
+    7. Removing stopwords (common words like 'the', 'is', 'a', etc.).
+    """
+    # Remove email headers such as From, To, Subject, Date
     if remove_headers:
         text = re.sub(r'^(From:|To:|Subject:|Date:)[^\n]*\n', '', text, flags=re.MULTILINE)
     
-    # Optional: Remove all digits and replace them with the word 'NUMBER'
+    # Remove numbers and replace with 'NUMBER'
     if remove_numbers:
         text = re.sub(r'\d+', 'NUMBER', text)
     
-    # Optional: Remove URLs from the text
+    # Remove URLs from the text
     if remove_urls:
         text = re.sub(r'http\S+|www\S+', 'URL', text)
     
-    # Optional: Convert the text to lowercase
+    # Convert the text to lowercase
     if lowercase:
         text = text.lower()
     
-    # Optional: Remove punctuation (e.g., commas, periods, etc.)
+    # Remove punctuation (e.g., commas, periods, etc.)
     if remove_punctuation:
         text = text.translate(str.maketrans('', '', string.punctuation))
     
-    # Split text into words and lemmatize each word (i.e., reduce words to their base form)
+    # Split the text into words, lemmatize each word, and remove stopwords
     words = text.split()
     words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
     
@@ -121,11 +131,22 @@ grid_search_svc.fit(X_train, y_train)
 
 # Define a function to evaluate the model's performance and return classification metrics
 def evaluate_model(grid_search, X_test, y_test):
-    y_pred = grid_search.best_estimator_.predict(X_test)  # Get predictions using the best model
-    accuracy = accuracy_score(y_test, y_pred)  # Accuracy score
-    precision = precision_score(y_test, y_pred)  # Precision score
-    recall = recall_score(y_test, y_pred)  # Recall score
-    f1 = f1_score(y_test, y_pred)  # F1 score (harmonic mean of precision and recall)
+    """
+    Evaluates the model's performance using various metrics:
+    1. Accuracy
+    2. Precision
+    3. Recall
+    4. F1 Score
+    """
+    # Get predictions using the best model from the grid search
+    y_pred = grid_search.best_estimator_.predict(X_test)
+    
+    # Calculate classification metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    
     return accuracy, precision, recall, f1, y_pred
 
 # Store the results for each model for later comparison
@@ -184,6 +205,10 @@ plt.show()
 
 # GUI Setup to type message and classify
 def classify_message():
+    """
+    Function to classify a message as spam or ham using the best model.
+    It processes the input message, makes a prediction, and displays the result in a message box.
+    """
     # Retrieve the message typed by the user
     message = entry.get()
     

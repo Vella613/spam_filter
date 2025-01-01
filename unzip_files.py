@@ -7,15 +7,15 @@ def extract_tar_file(tar_file_path, extraction_dir):
     :param tar_file_path: Path to the tar.bz2 file
     :param extraction_dir: Directory where the file should be extracted
     """
-    # Ensure the extraction directory exists
+    # Ensures the extraction directory exists
     os.makedirs(extraction_dir, exist_ok=True)
 
-    # Check if the tar.bz2 file exists
+    # Checks if the tar.bz2 file exists
     if not os.path.exists(tar_file_path):
         print(f"The file {tar_file_path} does not exist.")
         return
 
-    # Open and extract the tar.bz2 file
+    # Opens and extracts the tar.bz2 file
     with tarfile.open(tar_file_path, 'r:bz2') as tar_ref:
         tar_ref.extractall(extraction_dir)
 
@@ -26,10 +26,10 @@ def extract_tar_file(tar_file_path, extraction_dir):
 tar_file_path_ham = r'dataset\20030228_easy_ham.tar.bz2'
 tar_file_path_spam = r'dataset\20030228_spam.tar.bz2'
 
-# Extraction directories
+# Extractions directories
 extraction_dir_ham = r'dataset\unzipped'
 extraction_dir_spam = r'dataset\unzipped'
 
-# Extract the datasets
+# Extracts the datasets
 extract_tar_file(tar_file_path_ham, extraction_dir_ham)
 extract_tar_file(tar_file_path_spam, extraction_dir_spam)

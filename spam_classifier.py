@@ -110,9 +110,6 @@ pipeline_rf = Pipeline([
 ])
 
 pipeline_svc = Pipeline([
-    # - Converts raw text into numerical features using the Term Frequency-Inverse Document Frequency (TF-IDF) representation.
-    # - TF-IDF calculates the importance of each word relative to a document and the entire dataset, reducing the impact of very common words.
-
     ('vectorizer', TfidfVectorizer(
         stop_words='english',  # Automatically removes common English stopwords (e.g., "the", "is"), which often don't add meaningful information.
         binary=True,           # Represents the presence (1) or absence (0) of each term, rather than counting term frequencies.
@@ -128,18 +125,18 @@ param_grid = {
     # Max document frequency: Ignore very common words (appear in more than a certain percentage of documents)
     # If a word appears in a large portion of the documents (e.g., 75%, 85%, or 95%), it is likely to be less informative
     # and is excluded from the feature set.
-    'vectorizer__max_df': [0.75, 0.85, 0.95],  
-    
+    'vectorizer__max_df': [0.75, 0.85, 0.95],  # Values to test for the maximum document frequency threshold
+
     # Min document frequency: Include words that appear in at least these many documents
     # Words that appear too infrequently (e.g., in only 1 or 2 documents) are likely to be noise and are excluded.
     # 'min_df=1' allows words appearing at least once in the corpus, while 'min_df=2' excludes those that appear very rarely.
-    'vectorizer__min_df': [1, 2],  
-    
+    'vectorizer__min_df': [1, 2],  # Values to test for the minimum document frequency threshold
+
     # N-gram range: This defines the range of n-grams (sequences of n words) to be considered.
     # (1, 1) = Unigrams (single words), (1, 2) = Unigrams and Bigrams (pairs of consecutive words), 
     # (1, 3) = Unigrams, Bigrams, and Trigrams (triplets of consecutive words).
     # Including n-grams allows the model to capture context and semantic meaning that individual words alone might miss.
-    'vectorizer__ngram_range': [(1, 1), (1, 2), (1, 3)]  
+    'vectorizer__ngram_range': [(1, 1), (1, 2), (1, 3)]  # Values to test for the n-gram range
 }
 
 # Extend the grid for specific models
@@ -161,14 +158,6 @@ grid_search_svc.fit(X_train, y_train)
 def evaluate_model(grid_search, X_test, y_test):
     """
     Evaluates the model using test data and returns metrics.
-
-    Args:
-        grid_search: GridSearchCV object with the best model.
-        X_test: Features for testing.
-        y_test: True labels for testing.
-
-    Returns:
-        tuple: Accuracy, precision, recall, F1-score, and predictions.
     """
     y_pred = grid_search.best_estimator_.predict(X_test)  # Predictions using the best model
 
@@ -228,18 +217,22 @@ def classify_message():
     model = grid_search_lr.best_estimator_  # Use the best model
     prediction = model.predict([cleaned_message])
     if prediction == 1:
-        messagebox.showinfo("Prediction", "This message is Spam!")
+        messagebox.showinfo("Classification Result", "This message is spam.")
     else:
-        messagebox.showinfo("Prediction", "This message is Ham!")
+        messagebox.showinfo("Classification Result", "This message is ham.")
 
-# Build the GUI
-window = tk.Tk()
-window.title("Spam Classifier")
+# GUI components
+root = tk.Tk()
+root.title("Spam Classifier")
+root.geometry("400x200")
 
-entry = tk.Entry(window, width=50)  # Input field
-entry.pack(pady=10)
+label = tk.Label(root, text="Enter your message:")
+label.pack()
 
-button = tk.Button(window, text="Classify", command=classify_message)  # Classify button
-button.pack(pady=5)
+entry = tk.Entry(root, width=50)
+entry.pack()
 
-window.mainloop()
+button = tk.Button(root, text="Classify", command=classify_message)
+button.pack()
+
+root.mainloop()  # Run the GUI loop

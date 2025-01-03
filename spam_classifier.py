@@ -194,7 +194,7 @@ plt.tight_layout()
 plt.show()
 
 # Plot ROC curves
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(6, 5))
 for model_name, result in results.items():
     y_pred_prob = grid_search_lr.best_estimator_.predict_proba(X_test)[:, 1]  # Probability of spam class
     fpr, tpr, _ = roc_curve(y_test, y_pred_prob)
@@ -221,18 +221,29 @@ def classify_message():
     else:
         messagebox.showinfo("Classification Result", "This message is ham.")
 
+
+
 # GUI components
 root = tk.Tk()
 root.title("Spam Classifier")
-root.geometry("400x200")
 
+# Set larger window size
+root.geometry("600x300")
+
+# Label for input
 label = tk.Label(root, text="Enter your message:")
-label.pack()
+label.pack(pady=10)
 
-entry = tk.Entry(root, width=50)
-entry.pack()
+# Entry field for user input
+entry = tk.Entry(root, width=60)
+entry.pack(pady=10)
 
+# Button to trigger classification
 button = tk.Button(root, text="Classify", command=classify_message)
-button.pack()
+button.pack(pady=20)
+
+# Label to display the classification result (spam or ham)
+result_label = tk.Label(root, text="", font=("Arial", 16), height=3)
+result_label.pack(pady=10)
 
 root.mainloop()  # Run the GUI loop

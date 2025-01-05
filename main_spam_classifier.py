@@ -210,7 +210,7 @@ results['SVC'] = evaluate_model(grid_search_svc, X_test, y_test)
 
 # Display classification reports for each model
 for model_name, result in results.items():
-    print(f"\nClassification Report for {model_name}:")
+    print(f"\nClassification results for {model_name}:")
     y_pred = result[4]  # Extract predictions
     print(classification_report(y_test, y_pred, target_names=le.classes_))
 

@@ -33,7 +33,7 @@ def extract_subject_date_and_delivered_from_email(email_content):
 
 def load_emails_from_folder(folder_path, label):
     """
-    Load email files from a specified folder, extract fields, and classify them by label.
+    Loads email files from a specified folder, extract fields, and classify them by label.
 
     Args:
         folder_path (str): Path to the folder containing email files.
@@ -73,7 +73,7 @@ def load_emails_from_folder(folder_path, label):
 
 def load_all_emails_from_folder(main_folder):
     """
-    Load emails from 'ham' and 'spam' folders, extract fields, and compile them into a DataFrame.
+    Loads emails from 'ham' and 'spam' folders, extract fields, and compile them into a DataFrame.
 
     Args:
         main_folder (str): Path to the main dataset folder containing 'ham' and 'spam' subfolders.

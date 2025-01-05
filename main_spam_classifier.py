@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt  # For plotting visualizations like confusion ma
 from sklearn.preprocessing import LabelEncoder  # Encodes categorical target labels into numeric values
 import nltk  # Natural language processing (NLP) library for text processing tasks
 from nltk.stem import WordNetLemmatizer  # For lemmatizing words, reducing them to their base form
-from nltk.corpus import stopwords  # To filter out common stopwords (e.g., 'the', 'is') during preprocessing
+from nltk.corpus import stopwords  # To filter out common stopwords ('the', 'is') during preprocessing
 import pandas as pd  # For data manipulation, reading CSV files, and handling datasets
 import tkinter as tk  # GUI components for creating the user interface
 from tkinter import messagebox  # For displaying message boxes in the GUI
@@ -113,7 +113,7 @@ pipeline_rf = Pipeline([
 
 pipeline_svc = Pipeline([
     ('vectorizer', TfidfVectorizer(
-        stop_words='english',  # Automatically removes common English stopwords (e.g., "the", "is"), which often don't add meaningful information.
+        stop_words='english',  # Automatically removes common English stopwords ("the", "is"), which often don't add meaningful information.
         binary=True,           # Represents the presence (1) or absence (0) of each term, rather than counting term frequencies.
         max_features=10000,    # Limits the vocabulary size to the top 10,000 most frequent terms, balancing computational efficiency and model performance.
         ngram_range=(1, 3)     # Considers unigrams (individual words), bigrams (two-word combinations), and trigrams (three-word combinations).

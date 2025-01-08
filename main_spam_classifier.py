@@ -18,18 +18,18 @@ import pandas as pd  # For data manipulation, reading CSV files, and handling da
 import tkinter as tk  # GUI components for creating the user interface
 from tkinter import messagebox  # For displaying message boxes in the GUI
 
-# Ensure necessary NLTK resources are downloaded
-nltk.download('punkt')  # Download tokenizer resources
-nltk.download('stopwords')  # Download common stopwords list
-nltk.download('wordnet')  # Download lemmatizer resources
+# Ensures necessary NLTK resources are downloaded
+nltk.download('punkt')  # Downloads tokenizer resources
+nltk.download('stopwords')  # Downloads common stopwords list
+nltk.download('wordnet')  # Downloads lemmatizer resources
 
 # Sets a random seed 
 random_state = 42
 
-# Load the dataset into a pandas DataFrame
+# Loads the dataset into a pandas DataFrame
 df = pd.read_csv('reduced_dataset_20030228_from_unzipped.csv')  # Dataset containing email data
 
-# Initialize the WordNetLemmatizer and stopwords list
+# Initializes the WordNetLemmatizer and stopwords list
 lemmatizer = WordNetLemmatizer()  # Lemmatizer reduces words to base forms (e.g., "running" to "run")
 stop_words = set(stopwords.words('english'))  # Stopwords are common words to ignore during text processing
 
@@ -61,44 +61,44 @@ def preprocess_email(text, remove_punctuation=True, lowercase=True, remove_urls=
         text = re.sub(r'^(From:|To:|Subject:|Date:)[^\n]*\n', '', text, flags=re.MULTILINE)
 
     if remove_numbers:
-        # Replace all numeric sequences with the word 'NUMBER'
+        # Replaces all numeric sequences with the word 'NUMBER'
         text = re.sub(r'\d+', 'NUMBER', text)
 
     if remove_urls:
-        # Remove URLs (e.g., 'http://example.com')
+        # Removes URLs (e.g., 'http://example.com')
         text = re.sub(r'http\S+|www\S+', 'URL', text)
 
     if lowercase:
-        # Convert the entire text to lowercase
+        # Converts the entire text to lowercase
         text = text.lower()
 
     if remove_punctuation:
-        # Remove punctuation using string translation
+        # Removes punctuation using string translation
         text = text.translate(str.maketrans('', '', string.punctuation))
 
-    # Tokenize, lemmatize words, and remove stopwords
+    # Tokenizes, lemmatizes words, and removes stopwords
     words = text.split()
     words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
 
-    # Recombine words into a single string
+    # Recombines words into a single string
     return ' '.join(words)
 
 
-# Apply preprocessing to the 'subject' column of the dataset
+# Applies preprocessing to the 'subject' column of the dataset
 df['cleaned_text'] = df['subject'].apply(preprocess_email)  # Creates a new column for cleaned text
 
-# Encode the target labels (spam/ham) as numerical values (0 for ham, 1 for spam)
+# Encodes the target labels (spam/ham) as numerical values (0 for ham, 1 for spam)
 le = LabelEncoder()  # Converts categorical labels to numeric values
 df['label'] = le.fit_transform(df['class'])  # Maps 'ham' -> 0 and 'spam' -> 1
 
-# Split the dataset into features (X) and target labels (y)
+# Splits the dataset into features (X) and target labels (y)
 X = df['cleaned_text']  # Text data after preprocessing
 y = df['label']  # Encoded labels
 
-# Split the data into training (80%) and testing (20%) sets
+# Splits the data into training (80%) and testing (20%) sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random_state)
 
-# Define machine learning pipelines for different models
+# Defines the pipelines for the models
 pipeline_lr = Pipeline([
     ('vectorizer', TfidfVectorizer(stop_words='english', binary=True, max_features=10000, ngram_range=(1, 3))),  # TF-IDF conversion
     ('oversample', RandomOverSampler(random_state=random_state)),  # Balance classes using oversampling
@@ -107,7 +107,7 @@ pipeline_lr = Pipeline([
 
 pipeline_rf = Pipeline([
     ('vectorizer', TfidfVectorizer(stop_words='english', binary=True, max_features=10000, ngram_range=(1, 3))),  # TF-IDF conversion
-    ('oversample', RandomOverSampler(random_state=random_state)),  # Balance classes using oversampling
+    ('oversample', RandomOverSampler(random_state=random_state)),  # Balances classes using oversampling
     ('classifier', RandomForestClassifier(class_weight='balanced', random_state=random_state))  # Random Forest classifier
 ])
 
@@ -149,23 +149,23 @@ param_grid = {
 
 
 
-# Extend the grid for specific models
+# Extends the grid for each models
 
 param_grid_lr = {**param_grid, 'classifier__C': [0.01, 0.1, 1, 10, 100]}  # Logistic Regression regularization
 param_grid_rf = {**param_grid, 'classifier__n_estimators': [100, 200, 500], 'classifier__max_depth': [10, 20, 50]}  # RF trees & depth
 param_grid_svc = {**param_grid, 'classifier__C': [0.01, 0.1, 1, 10, 100]}  # SVC regularization
 
-# Perform GridSearchCV to tune hyperparameters for each model
+# Performs GridSearchCV to tune hyperparameters for each model
 grid_search_lr = GridSearchCV(pipeline_lr, param_grid_lr, cv=3, verbose=1, n_jobs=-1)
 grid_search_rf = GridSearchCV(pipeline_rf, param_grid_rf, cv=3, verbose=1, n_jobs=-1)
 grid_search_svc = GridSearchCV(pipeline_svc, param_grid_svc, cv=3, verbose=1, n_jobs=-1)
 
-# Fit the models using the training data
+# Fits the models using the training data
 grid_search_lr.fit(X_train, y_train)
 grid_search_rf.fit(X_train, y_train)
 grid_search_svc.fit(X_train, y_train)
 
-# Function to evaluate model performance
+# Function for evaluating model performance
 def evaluate_model(grid_search, X_test, y_test):
     """
     Evaluates the model using test data and returns metrics.
@@ -187,34 +187,34 @@ def visualize_vectors(model, text_data):
         model (TfidfVectorizer): The trained TF-IDF vectorizer.
         text_data (list of str): The cleaned text data (e.g., emails).
     """
-    tfidf_matrix = model.transform(text_data)  # Transform text data into TF-IDF representation
-    dense_matrix = tfidf_matrix.todense()  # Convert sparse matrix to dense format
-    feature_names = model.get_feature_names_out()  # Get feature names (terms)
+    tfidf_matrix = model.transform(text_data)  # Transforming text data into TF-IDF representation
+    dense_matrix = tfidf_matrix.todense()  # Converting sparse matrix to dense format
+    feature_names = model.get_feature_names_out()  # Getting feature names (terms)
 
     for i, text in enumerate(text_data):  # Loop through each email
         vector_string = []
-        for j, value in enumerate(dense_matrix[i].tolist()[0]):  # Iterate over non-zero values
-            if value > 0:  # Only print non-zero values (important terms)
-                vector_string.append(f"{feature_names[j]}:{value:.4f}")  # Format with 4 decimal places
+        for j, value in enumerate(dense_matrix[i].tolist()[0]):  # Iterates over non-zero values
+            if value > 0:  # Only printing non-zero values (important terms)
+                vector_string.append(f"{feature_names[j]}:{value:.4f}")  # Formatting with 4 decimal places
         print(f"Text {i + 1} Vector: " + ", ".join(vector_string) + "\n")  # Adding newline after each vector
 
 
 visualize_vectors(grid_search_lr.best_estimator_.named_steps['vectorizer'], X_train[:5])
 
-# Evaluate and store results for each model
+# Evaluating and storing results for each model
 results = {}
 results['Logistic Regression'] = evaluate_model(grid_search_lr, X_test, y_test)
 results['Random Forest'] = evaluate_model(grid_search_rf, X_test, y_test)
 results['SVC'] = evaluate_model(grid_search_svc, X_test, y_test)
 
 
-# Display classification reports for each model
+# Displays classification reports for each model
 for model_name, result in results.items():
     print(f"\nClassification results for {model_name}:")
-    y_pred = result[4]  # Extract predictions
+    y_pred = result[4]  # Extracts predictions
     print(classification_report(y_test, y_pred, target_names=le.classes_))
 
-# Plot confusion matrices
+# Plots confusion matrices
 plt.figure(figsize=(15, 5))
 for i, (model_name, result) in enumerate(results.items(), 1):
     y_pred = result[4]
@@ -227,12 +227,12 @@ for i, (model_name, result) in enumerate(results.items(), 1):
 plt.tight_layout()
 plt.show()
 
-# Plot ROC curves
+# Plots ROC curves
 plt.figure(figsize=(6, 5))
 
-# Iterate over all models and plot their ROC curves
+# Iterates over all models and plot their ROC curves
 for model_name, result in results.items():
-    # Get predicted probabilities for each model
+    # Gets predicted probabilities for each model
     if model_name == 'Logistic Regression':
         y_pred_prob = grid_search_lr.best_estimator_.predict_proba(X_test)[:, 1]  # Probability of spam class
     elif model_name == 'Random Forest':
@@ -240,23 +240,23 @@ for model_name, result in results.items():
     elif model_name == 'SVC':
         y_pred_prob = grid_search_svc.best_estimator_.predict_proba(X_test)[:, 1]  # Probability of spam class
 
-    # Calculate ROC curve
+    # Calculates ROC curve
     fpr, tpr, _ = roc_curve(y_test, y_pred_prob)
     auc_score = auc(fpr, tpr)
 
-    # Plot ROC curve for the current model
+    # Plots ROC curve for the current model
     plt.plot(fpr, tpr, label=f'{model_name} (AUC = {auc_score:.2f})')
 
-# Plot diagonal line (random classifier line)
+# Plots diagonal line (random classifier line)
 plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
 
-# Set labels and title
+# Sets labels and title
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('ROC Curve for Different Models')
 plt.legend()
 
-# Show plot
+# Shows plot
 plt.show()
 
 # GUI for spam classification
@@ -266,40 +266,40 @@ def classify_message():
     Classifies a user-entered message as spam or ham using the trained model.
     """
 
-    message = message_entry.get()  # Get the message entered by the user
+    message = message_entry.get()  # Gets the message entered by the user
 
-    # Preprocess the entered message
+    # Preprocesses the entered message
     message = preprocess_email(message)
 
-    # Predict the class using the Logistic Regression model (or another model of choice)
+    # Predicts the class using the Logistic Regression model (or another model of choice)
     prediction = grid_search_lr.best_estimator_.predict([message])
 
-    # Map the predicted class (0 or 1) back to 'ham' or 'spam'
+    # Maps the predicted class (0 or 1) back to 'ham' or 'spam'
     result = 'Spam' if prediction == 1 else 'Ham'
 
-    # Show the result in a message box
+    # Shows the result in a message box
     messagebox.showinfo('Prediction Result', f'The message is classified as: {result}')
 
-# Set up the Tkinter window for the GUI
+# Setting up the Tkinter window for the GUI
 window = tk.Tk()
-# Set title and window size
+# Sets title and window size
 window.title("Spam Classifier")
 window.geometry("600x300")
 
-# Set up a label and entry box for the user to input a message
+# Setting up a label and entry box for the user to input a message
 label = tk.Label(window, text='Enter your message:')
 label.pack(pady=10)
 
-message_entry = tk.Entry(window, width=80)  # Create an entry field for input
+message_entry = tk.Entry(window, width=80)  # Creating an entry field for input
 message_entry.pack(pady=10)
 
-# Button to trigger classification
-button = tk.Button(window, text="Classify", command=classify_message)  # Button to trigger classification
+# Button for triggering classification
+button = tk.Button(window, text="Classify", command=classify_message)  # Button for triggering classification
 button.pack(pady=20)
 
-# Label to display the classification result (spam or ham)
-result_label = tk.Label(window, text="", font=("Arial", 16), height=3)  # Display result
+# Label for displaying the classification result (spam or ham)
+result_label = tk.Label(window, text="", font=("Arial", 16), height=3)  # Displays result
 result_label.pack(pady=10)
 
-# Run the GUI application
-window.mainloop()  # Start the Tkinter event loop
+# Runs the GUI application
+window.mainloop()  # Starts the Tkinter event loop

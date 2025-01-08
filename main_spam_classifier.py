@@ -90,6 +90,7 @@ df['cleaned_text'] = df['subject'].apply(preprocess_email)  # Creates a new colu
 # Encodes the target labels (spam/ham) as numerical values (0 for ham, 1 for spam)
 le = LabelEncoder()  # Converts categorical labels to numeric values
 df['label'] = le.fit_transform(df['class'])  # Maps 'ham' -> 0 and 'spam' -> 1
+print(df['label']) # for debugging!
 
 # Splits the dataset into features (X) and target labels (y)
 X = df['cleaned_text']  # Text data after preprocessing
@@ -98,7 +99,7 @@ y = df['label']  # Encoded labels
 # Splits the data into training (80%) and testing (20%) sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random_state)
 
-# Defines the pipelines for the models
+# Defines the pipelines for the  models
 pipeline_lr = Pipeline([
     ('vectorizer', TfidfVectorizer(stop_words='english', binary=True, max_features=10000, ngram_range=(1, 3))),  # TF-IDF conversion
     ('oversample', RandomOverSampler(random_state=random_state)),  # Balance classes using oversampling

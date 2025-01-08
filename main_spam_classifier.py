@@ -254,7 +254,7 @@ plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
 # Sets labels and title
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('ROC Curve for Different Models')
+plt.title('ROC Curve with Logistic Regression, RandomForest and SVC')
 plt.legend()
 
 # Shows plot
